@@ -169,7 +169,12 @@ estStrictementInclus(_,_).
 % À réaliser
 % lesComposantsDuType(IdAgencement,Ty,Compos)
 % unifie Compos à la liste des composants de l'agencement qui sont du type Ty
-lesComposantsDuType(_,_,[]).
+lesComposantsDuType(_,[],[]).
+lesComposantsDuType(Id,Ty,Compos) :- agencement(Id,Xs),lesComposDuType(Ty,Xs,Compos).
+
+lesComposDuType(_,[],[]).
+lesComposDuType(Ty,[X|Xs],[X|Q]) :- composant(_,X,_,_,Y), Ty = Y,lesComposantsDuType(Ty,Xs,Q).
+lesComposDuType(Ty,[X|Xs],Q) :- composant(_,X,_,_,Y), \+ Ty = Y, lesComposantsDuType(Ty,Xs,Q).
 
 % possedeTypes(Ag,Types)
 % Est vrai si et seulement si l'agencement Ag possède tous les types de composants
@@ -182,7 +187,7 @@ possedeTypes(_,[]).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% À réaliser
+% Completer la doc, mais le predicat unifie le bon resultat
 % lesIds(Blocs,Css)
 % unifie Css à la liste des listes des identificateurs des composants d'une liste de blocs
 
