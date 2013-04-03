@@ -179,7 +179,37 @@ possedeTypes(Ag,[Ty|Types]) :-
 	possedeTypes(Ag,Types).
 possedeTypes(_,[]).
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % À réaliser
 % lesIds(Blocs,Css)
 % unifie Css à la liste des listes des identificateurs des composants d'une liste de blocs
-lesIds(_,[]).
+
+lesIds([],[]).
+lesIds([X|Xs], [T|Q]) :- lesComposantsDuBloc(X, T),lesIds(Xs,Q).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%a effacer plus tard
+composant(meuble ,b1,(1.0,1.0,1.0),position(0.0, 0.0, 0.0),coin).
+composant(electro,b2,(1.0,1.0,1.0),position(1.0, 0.0, 0.0),laveVaisselle).
+composant(meuble,b3,(1.0,1.0,1.0),position(0.0, 1.0, 0.0),bas).
+composant(meuble,b4,(1.0,1.0,1.0),position(2.0, 0.0, 0.0),bas).
+composant(meuble,h1,(1.0,1.0,0.5),position(2.0, 0.0, 2.0),haut).
+composant(meuble,h2,(1.0,1.0,0.5),position(3.0, 0.0, 2.0),haut).
+composant(meuble,b5,(1.0,1.0,1.0),position(4.0, 0.0, 0.0),haut).
+composant(meuble,b6,(1.0,1.0,1.0),position(5.0, 0.0, 0.0),haut).
+
+bloc(0,[axCmp(y,b1),axCmp(y,b3)]).
+bloc(1,[axCmp(x,b1),axCmp(x,b2),axCmp(x,b4)]).
+bloc(2,[axCmp(x,b5),axCmp(x,b6)]).
+bloc(3,[axCmp(x,h1),axCmp(x,h2)]).
+bloc(4,[axCmp(x,b1),axCmp(x,b4),axCmp(y,b2)]).
+bloc(5,[axCmp(x,b1),axCmp(x,b2)]).
+bloc(6,[axCmp(y,b1)]).
+bloc(7,[axCmp(x,b1),axCmp(x,b2),axCmp(y,b3),axCmp(x,b4)]).
+
+blocs([1,2,3]).
+
+
