@@ -170,9 +170,9 @@ elimineBloc(BlocY,[_|BlocsX]) :-
 % est vrai si et seulemnt si BlocY est strictement inclus dans BlocX
 % peu importe l'ordre des composants dans les blocs.
 
-estStrictementInclus(By,Bx) :- lesComposantsDuBloc(By, Cys), sort(Cys, Cyst),
-                               lesComposantsDuBloc(Bx, Cxs), sort(Cxs, Cxst),
-                               sublist(Cyst, Cxst).
+estStrictementInclus(By,Bx) :- lesComposantsDuBloc(By, Cys),
+                               lesComposantsDuBloc(Bx, Cxs),
+                               sublist(Cys, Cxs).
 
 sublist(Xs,Ys) :- subset(Xs,Ys), \+subset(Ys,Xs).
 
