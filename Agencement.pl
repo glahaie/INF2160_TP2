@@ -160,21 +160,36 @@ elimineBloc(BlocY,[BlocX|_]) :-
 elimineBloc(BlocY,[_|BlocsX]) :-
 	elimineBloc(BlocY,BlocsX).
 
-% À réaliser
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Fonctionne pour tous les tests de main -- vérifier s'il est nécessaire d'enlever
+%les doublons possibles, ou de faire un sort sur les listes de composants. 
+%Y a-t-il une facon plus efficace de regarder si une liste est strictement
+%inclue dans une autre?
+%
 % estStrictementInclus(BlocY,BlocX)
 % est vrai si et seulemnt si BlocY est strictement inclus dans BlocX
 % peu importe l'ordre des composants dans les blocs.
-estStrictementInclus(_,_).
 
-% À réaliser
+estStrictementInclus(By,Bx) :- lesComposantsDuBloc(By, Cys), sort(Cys, Cyst),
+                               lesComposantsDuBloc(Bx, Cxs), sort(Cxs, Cxst),
+                               sublist(Cyst, Cxst).
+
+sublist(Xs,Ys) :- subset(Xs,Ys), \+subset(Ys,Xs).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% le predicat fonctionne, et utilise lesComposDuType. On peut probablement l'éviter,
+% mais pour le moment donne le bon resultat pour toutes les tests de Main
 % lesComposantsDuType(IdAgencement,Ty,Compos)
 % unifie Compos à la liste des composants de l'agencement qui sont du type Ty
 lesComposantsDuType(_,[],[]).
 lesComposantsDuType(Id,Ty,Compos) :- agencement(Id,Xs),lesComposDuType(Ty,Xs,Compos).
 
 lesComposDuType(_,[],[]).
-lesComposDuType(Ty,[X|Xs],[X|Q]) :- composant(_,X,_,_,Y), Ty = Y,lesComposantsDuType(Ty,Xs,Q).
-lesComposDuType(Ty,[X|Xs],Q) :- composant(_,X,_,_,Y), \+ Ty = Y, lesComposantsDuType(Ty,Xs,Q).
+lesComposDuType(Ty,[X|Xs],[X|Q]) :- composant(_,X,_,_,Y), Ty = Y,lesComposDuType(Ty,Xs,Q).
+lesComposDuType(Ty,[X|Xs],Q) :- composant(_,X,_,_,Y), \+ Ty = Y, lesComposDuType(Ty,Xs,Q).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 % possedeTypes(Ag,Types)
 % Est vrai si et seulement si l'agencement Ag possède tous les types de composants
@@ -214,7 +229,13 @@ bloc(4,[axCmp(x,b1),axCmp(x,b4),axCmp(y,b2)]).
 bloc(5,[axCmp(x,b1),axCmp(x,b2)]).
 bloc(6,[axCmp(y,b1)]).
 bloc(7,[axCmp(x,b1),axCmp(x,b2),axCmp(y,b3),axCmp(x,b4)]).
+bloc(8,[axCmp(x,b4),axCmp(x,b3),axCmp(y,b2),axCmp(x,b3)]).
 
 blocs([1,2,3]).
+
+agencement(ag,[b1,b2,b3,b4,b5,b6,h1,h2]).
+agencement(vide,[]).
+agencement(un,[h1]).
+agencement(deux,[b1,b3]).
 
 
