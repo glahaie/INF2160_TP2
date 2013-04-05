@@ -78,6 +78,8 @@ estVoisin(gauche,Axe,C1,C2) :-
 	(Axe = x -> Xl2 is X2 + L2, Xl2 == X1, Y1 == Y2, Z1 == Z2;
 	    Yl2 is Y2 - L2, Yl2 == Y1, X1 == X2, Z1 == Z2).
 
+
+
 % À réaliser
 % lesVoisins(Dir,Axe,Ag,Compo,Voisins)
 % Dir est une direction
@@ -85,7 +87,17 @@ estVoisin(gauche,Axe,C1,C2) :-
 % Ag est un agencement
 % Compo est un composant 
 % Voisins s'unifie à la liste des voisins de Compo sur l'axe Axe et dans la direction Dir
-lesVoisins(_,_,_,Compo,[Compo]).
+%
+% Donc, on doit obtenir la liste des composants à partir de Ag, ensuite on passe à
+% travers cette liste. On appelle ensuite estVoisin pour faire la vérification, si
+% estVoisin est vrai, alors on ajoute à la liste.
+lesVoisins(Dir,Axe,Ag,Compo,Voisins) :- agencement(Ag,L),lesVoisinsBis(Dir,Axe,L,Compo, Voisins).
+
+lesVoisinsBis(_,_,[],_,[]).
+lesVoisinsBis(Dir,Axe,[X|Xs],Compo,[X|Ys]) :- estVoisin(Dir,Axe,X,Compo),lesVoisinsBis(Dir,Axe,Xs,Compo,Ys).
+lesVoisinsBis(Dir,Axe,[_|Xs],Compo,Ys) :- lesVoisinsBis(Dir,Axe,Xs,Compo,Ys).
+
+
 
 % leBloc(Ax,Ag,Compo,Bloc)
 % Axe est un axe
