@@ -94,8 +94,8 @@ estVoisin(gauche,Axe,C1,C2) :-
 lesVoisins(Dir,Axe,Ag,Compo,Voisins) :- agencement(Ag,L),lesVoisinsBis(Dir,Axe,L,Compo, Voisins).
 
 lesVoisinsBis(_,_,[],_,[]).
-lesVoisinsBis(Dir,Axe,[X|Xs],Compo,[X|Ys]) :- estVoisin(Dir,Axe,X,Compo),lesVoisinsBis(Dir,Axe,Xs,Compo,Ys).
-lesVoisinsBis(Dir,Axe,[_|Xs],Compo,Ys) :- lesVoisinsBis(Dir,Axe,Xs,Compo,Ys).
+lesVoisinsBis(Dir,Axe,[X|Xs],Compo,[X|Ys]) :- estVoisin(Dir,Axe,Compo,X),lesVoisinsBis(Dir,Axe,Xs,Compo,Ys).
+lesVoisinsBis(Dir,Axe,[X|Xs],Compo,Ys) :- \+ estVoisin(Dir,Axe,Compo,X),lesVoisinsBis(Dir,Axe,Xs,Compo,Ys).
 
 
 
