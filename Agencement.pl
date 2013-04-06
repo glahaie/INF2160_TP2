@@ -91,11 +91,17 @@ estVoisin(gauche,Axe,C1,C2) :-
 % Donc, on doit obtenir la liste des composants à partir de Ag, ensuite on passe à
 % travers cette liste. On appelle ensuite estVoisin pour faire la vérification, si
 % estVoisin est vrai, alors on ajoute à la liste.
-lesVoisins(Dir,Axe,Ag,Compo,Voisins) :- agencement(Ag,L),lesVoisinsBis(Dir,Axe,L,Compo, Voisins).
+%
+% À confirmer: on doit trouver tous les voisins? Par exemple, si on trouve un bloc
+% qui est voisin de compo, on doit alors ajouter les blocs qui sont voisins aussi
+% de ce bloc. Ce n'est pas clair de la définition du prédicat
+lesVoisins(Dir,Axe,Ag,Compo,Voisins) :- agencement(Ag,L),lesVoisinsBis(Dir,Axe,Ag,L,Compo, Voisins),!.
 
-lesVoisinsBis(_,_,[],_,[]).
-lesVoisinsBis(Dir,Axe,[X|Xs],Compo,[X|Ys]) :- estVoisin(Dir,Axe,Compo,X),lesVoisinsBis(Dir,Axe,Xs,Compo,Ys).
-lesVoisinsBis(Dir,Axe,[X|Xs],Compo,Ys) :- \+ estVoisin(Dir,Axe,Compo,X),lesVoisinsBis(Dir,Axe,Xs,Compo,Ys).
+lesVoisinsBis(_,_,_,[],_,[]).
+lesVoisinsBis(Dir,Axe,Ag,[X|Xs],Compo,[X|Ys]) :- estVoisin(Dir,Axe,Compo,X),
+                                lesVoisins(Dir,Axe,Ag,X,Voisins),append(Voisins,Zs,Ys),
+                                lesVoisinsBis(Dir,Axe,Ag,Xs,Compo,Zs).
+lesVoisinsBis(Dir,Axe,Ag,[X|Xs],Compo,Ys) :- \+ estVoisin(Dir,Axe,Compo,X),lesVoisinsBis(Dir,Axe,Ag,Xs,Compo,Ys).
 
 
 
@@ -229,7 +235,7 @@ composant(electro,b2,(1.0,1.0,1.0),position(1.0, 0.0, 0.0),laveVaisselle).
 composant(meuble,b3,(1.0,1.0,1.0),position(0.0, 1.0, 0.0),bas).
 composant(meuble,b4,(1.0,1.0,1.0),position(2.0, 0.0, 0.0),bas).
 composant(meuble,h1,(1.0,1.0,0.5),position(2.0, 0.0, 2.0),haut).
-composant(meuble,h2,(1.0,1.0,0.5),position(3.0, 0.0, 2.0),haut).
+composant(meuble,h2,(1.0,1.0,1.0),position(3.0, 0.0, 0.0),haut).
 composant(meuble,b5,(1.0,1.0,1.0),position(4.0, 0.0, 0.0),haut).
 composant(meuble,b6,(1.0,1.0,1.0),position(5.0, 0.0, 0.0),haut).
 
