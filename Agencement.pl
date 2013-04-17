@@ -5,6 +5,15 @@
 * Titre		: Module de gestion d'un agencement
 * 
 * Auteur	: Bernard Lefebvre
+*
+* Modifié par Guillaume Lahaie
+*             LAHG04077707
+*             Dernière modification: 17 avril 2013
+*
+*             Les prédicats lesIds,lesComposantsDuType, estSrictementInclus
+*             et les voisins ont été définis pour le TP2. Les prédicats
+*             lesComposantsDuType2 et sousListe ont aussi été définis
+*             pour la réalisation des prédicats mentionnés.
 *********************************************************************/
 
 laDimension(Idc,D) :- composant(_,Idc,D,_,_).
@@ -79,31 +88,41 @@ estVoisin(gauche,Axe,C1,C2) :-
 	    Yl2 is Y2 - L2, Yl2 == Y1, X1 == X2, Z1 == Z2).
 
 
-
-% À réaliser
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % lesVoisins(Dir,Axe,Ag,Compo,Voisins)
 % Dir est une direction
 % Axe est un axe
 % Ag est un agencement
 % Compo est un composant 
-% Voisins s'unifie à la liste des voisins de Compo sur l'axe Axe et dans la direction Dir
+% Voisins s'unifie à la liste des voisins de Compo sur l'axe Axe et dans la 
+% direction Dir. Ici, la liste des voisins comprend tous les blocs liés dans
+% la direction donnée. Par exemple, si b1 est un voisin de b2 et b2 est un 
+% voisin de Compo, alors b1 et b2 seront dans la liste Voisins.
 %
-% Donc, on doit obtenir la liste des composants à partir de Ag, ensuite on passe à
-% travers cette liste. On appelle ensuite estVoisin pour faire la vérification, si
-% estVoisin est vrai, alors on ajoute à la liste.
+%On tente donc de trouver un voisin de Compo à partir de la liste des composants
+%de l'agencement donné. Si on trouve un voisin, on cherche alors les voisins de
+%ce composant dans la liste originale, dans la même direction donnée (sinon, on
+%pourrait obtenir une récurision sans fin). On ajoute ce résultat à la liste Voisins,
+%et on continue ensuite à traiter le reste de la liste 
 %
-% À confirmer: on doit trouver tous les voisins? Par exemple, si on trouve un bloc
-% qui est voisin de compo, on doit alors ajouter les blocs qui sont voisins aussi
-% de ce bloc. Ce n'est pas clair de la définition du prédicat
-lesVoisins(Dir,Axe,Ag,Compo,Voisins) :- agencement(Ag,L),lesVoisinsBis(Dir,Axe,Ag,L,Compo, Voisins),!.
+%Exemple d'utilisation:
+%| ?- lesVoisins(droite,y,ag,b3,Bs).
+%Bs = [b1] ? 
+%yes
+%| ?- lesVoisins(gauche,x,ag,b4,Bs).
+%Bs = [b2,b1] ? 
+%yes
+lesVoisins(Dir,Axe,Ag,Compo,Voisins) :- agencement(Ag,L),
+                                        lesVoisins(Dir,Axe,Ag,L,Compo, Voisins),!.
 
-lesVoisinsBis(_,_,_,[],_,[]).
-lesVoisinsBis(Dir,Axe,Ag,[X|Xs],Compo,[X|Ys]) :- estVoisin(Dir,Axe,Compo,X),
+lesVoisins(_,_,_,[],_,[]).
+lesVoisins(Dir,Axe,Ag,[X|Xs],Compo,[X|Ys]) :- estVoisin(Dir,Axe,Compo,X),
                                 lesVoisins(Dir,Axe,Ag,X,Voisins),append(Voisins,Zs,Ys),
-                                lesVoisinsBis(Dir,Axe,Ag,Xs,Compo,Zs).
-lesVoisinsBis(Dir,Axe,Ag,[X|Xs],Compo,Ys) :- \+ estVoisin(Dir,Axe,Compo,X),lesVoisinsBis(Dir,Axe,Ag,Xs,Compo,Ys).
+                                lesVoisins(Dir,Axe,Ag,Xs,Compo,Zs).
+lesVoisins(Dir,Axe,Ag,[X|Xs],Compo,Ys) :- \+ estVoisin(Dir,Axe,Compo,X),
+                                                lesVoisins(Dir,Axe,Ag,Xs,Compo,Ys).
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % leBloc(Ax,Ag,Compo,Bloc)
 % Axe est un axe
@@ -179,33 +198,76 @@ elimineBloc(BlocY,[_|BlocsX]) :-
 	elimineBloc(BlocY,BlocsX).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%Fonctionne pour tous les tests de main -- vérifier s'il est nécessaire d'enlever
-%les doublons possibles, ou de faire un sort sur les listes de composants. 
-%Y a-t-il une facon plus efficace de regarder si une liste est strictement
-%inclue dans une autre?
+%estStrictementInclus(BlocY,Blocx):
+%BlocX et BlocY sont des listes de blocs
+%Le prédicat vérifie si tous les composants de BlocX sont inclus dans
+%les blocs de BlocX, tel que BlocX contient au moins un autre composant
+%qui n'est pas contenu dans BlocY (selon la définition ensembliste d'un
+%ensemble strictement inclus dans un autre ensemble).
+%On obtient donc la liste des composants des deux blocs, et ensuite on compare
+%on vérifie si la liste des composants de BlocX est une sous-liste de la liste
+%de BlocY, et aussi si la liste des composants de BlocY n'est pas une sous-liste
+%de BlocX.
 %
-% estStrictementInclus(BlocY,BlocX)
-% est vrai si et seulemnt si BlocY est strictement inclus dans BlocX
-% peu importe l'ordre des composants dans les blocs.
-
+%Je définie ici le prédicat sousListe pour vérifier si une liste est une 
+%sous-liste d'une autre liste. On pourrait aussi utiliser subset, défini
+%par prolog, mais je préfère le faire moi-même.
+%
+%Exemple d'utilisation:
+%| ?- bloc(1,B1),bloc(7,B7),estStrictementInclus(B1,B7).
+%B1 = [axCmp(x,b1),axCmp(x,b2),axCmp(x,b4)],
+%B7 = [axCmp(x,b1),axCmp(x,b2),axCmp(y,b3),axCmp(x,b4)] ? 
+%yes
 estStrictementInclus(By,Bx) :- lesComposantsDuBloc(By, Cys),
                                lesComposantsDuBloc(Bx, Cxs),
-                               sublist(Cys, Cxs).
+                               sousListe(Cys,Cxs),\+sousListe(Cxs,Cys).
 
-sublist(Xs,Ys) :- subset(Xs,Ys), \+subset(Ys,Xs).
+%sousListe(L1,L2):
+%L1 et L2 sont deux listes, de n'importe quel type d'éléments
+%sousListe vérifie si la liste L1 est une sous-liste de L2.
+%Exemples d'utilisation:
+%| ?- sousListe([1,2,3],[1,2,3,4,5,6]).
+%yes
+%| ?- sousListe([1,2,3],[1,3,4,5,6]).
+%no
+sousListe([],_).
+sousListe([X|Xs],Liste) :- member(X,Liste),sousListe(Xs,Liste).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% le predicat fonctionne, et utilise lesComposDuType. On peut probablement l'éviter,
-% mais pour le moment donne le bon resultat pour toutes les tests de Main
-% lesComposantsDuType(IdAgencement,Ty,Compos)
-% unifie Compos à la liste des composants de l'agencement qui sont du type Ty
-lesComposantsDuType(_,[],[]).
-lesComposantsDuType(Id,Ty,Compos) :- agencement(Id,Xs),lesComposDuType(Ty,Xs,Compos).
+%lesComposantsDuType(IdAgencement, Ty, Compos):
+%idAgencement: un agencement, fourni selon son identificateur
+%Ty: le type de composant recherché
+%Compos: s'unifie à la liste des composants de type Ty contenus dans l'agencement
+%idAgencement. La liste Compos doit contenir tous les éléments qui s'unifient, et
+%non une sous-liste. Je définie un deuxième prédicat pour vérifier la liste des
+%composants, alors que lesComposantsDuType obtient la liste des composants
+%d'un agencement qui est utilisé par le second prédicat.
+%
+%On obtient tout d'abord la liste des composants de l'agencement, et ensuite on
+%vérifie chaque agencement. Si l'agencement est du type recherché, on l'insère
+%dans Compos, sinon, on passe au prochain élément de la liste.
+%Exemple d'utilisation:
+%| ?- lesComposantsDuType(ag,bas,Bs).
+%Bs = [b3,b4] ? 
+%yes
+lesComposantsDuType(Id,Ty,Compos) :- agencement(Id,Ags),
+                                     lesComposantsDuType2(Ty,Ags,Compos).
 
-lesComposDuType(_,[],[]).
-lesComposDuType(Ty,[X|Xs],[X|Q]) :- composant(_,X,_,_,Y), Ty = Y,lesComposDuType(Ty,Xs,Q).
-lesComposDuType(Ty,[X|Xs],Q) :- composant(_,X,_,_,Y), \+ Ty = Y, lesComposDuType(Ty,Xs,Q).
 
+%lesComposantsDuType'(Ty,Composants,Compos).
+%Ty est le type de composant recherché.
+%Composants est la liste comprenants tous les composants.
+%Compos s'unifie à la liste des composants du type Ty.
+%Compos doit contenir tous les éléments du type recherche, et non seulement
+%une sous-liste.
+%exemple d'utilisation:
+%| ?- lesComposantsDuType2(haut,[b1,b2,b3,b4,b5,b6,h1,h2],Compos).
+%Compos = [b5,b6,h1,h2] ? 
+%yes
+lesComposantsDuType2(Ty,[X|Xs],[X|Q]) :- composant(_,X,_,_,Ty),!,
+                                         lesComposantsDuType2(Ty,Xs,Q).
+lesComposantsDuType2(Ty,[_|Xs], Q) :- !,lesComposantsDuType2(Ty,Xs,Q).
+lesComposantsDuType2(_,[],[]).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -220,40 +282,22 @@ possedeTypes(_,[]).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Completer la doc, mais le predicat unifie le bon resultat
+% 
 % lesIds(Blocs,Css)
-% unifie Css à la liste des listes des identificateurs des composants d'une liste de blocs
+% Blocs: Liste de blocs
+% Css: Liste de liste d'identificateurs de composants.
+% lesIds Unifient Css avec la liste de listes ce composants des blocs de la 
+% liste Blocs.Il est possible aussi d'unifier la liste Blocs avec les
+% blocs associés à la liste de listes de composants, toutefois l'information
+% dans les blocs sera incomplète, on ne peut obtenir la direction de l'axe.
+% Exemple d'utilisation:
+%| ?- bloc(1,Bloc1),bloc(2,Bloc2),lesIds([Bloc1,Bloc2],Ids).
+%Ids = [[b1,b2,b4],[b5,b6]],
+%Bloc1 = [axCmp(x,b1),axCmp(x,b2),axCmp(x,b4)],
+%Bloc2 = [axCmp(x,b5),axCmp(x,b6)] ? 
+%yes 
 
+lesIds([X|Xs], [C|Css]) :- lesComposantsDuBloc(X, C),lesIds(Xs,Css).
 lesIds([],[]).
-lesIds([X|Xs], [T|Q]) :- lesComposantsDuBloc(X, T),lesIds(Xs,Q).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%a effacer plus tard
-composant(meuble ,b1,(1.0,1.0,1.0),position(0.0, 0.0, 0.0),coin).
-composant(electro,b2,(1.0,1.0,1.0),position(1.0, 0.0, 0.0),laveVaisselle).
-composant(meuble,b3,(1.0,1.0,1.0),position(0.0, 1.0, 0.0),bas).
-composant(meuble,b4,(1.0,1.0,1.0),position(2.0, 0.0, 0.0),bas).
-composant(meuble,h1,(1.0,1.0,0.5),position(2.0, 0.0, 2.0),haut).
-composant(meuble,h2,(1.0,1.0,1.0),position(3.0, 0.0, 0.0),haut).
-composant(meuble,b5,(1.0,1.0,1.0),position(4.0, 0.0, 0.0),haut).
-composant(meuble,b6,(1.0,1.0,1.0),position(5.0, 0.0, 0.0),haut).
-
-bloc(0,[axCmp(y,b1),axCmp(y,b3)]).
-bloc(1,[axCmp(x,b1),axCmp(x,b2),axCmp(x,b4)]).
-bloc(2,[axCmp(x,b5),axCmp(x,b6)]).
-bloc(3,[axCmp(x,h1),axCmp(x,h2)]).
-bloc(4,[axCmp(x,b1),axCmp(x,b4),axCmp(y,b2)]).
-bloc(5,[axCmp(x,b1),axCmp(x,b2)]).
-bloc(6,[axCmp(y,b1)]).
-bloc(7,[axCmp(x,b1),axCmp(x,b2),axCmp(y,b3),axCmp(x,b4)]).
-bloc(8,[axCmp(x,b4),axCmp(x,b3),axCmp(y,b2),axCmp(x,b3)]).
-
-blocs([1,2,3]).
-
-agencement(ag,[b1,b2,b3,b4,b5,b6,h1,h2]).
-agencement(vide,[]).
-agencement(un,[h1]).
-agencement(deux,[b1,b3]).
-
-
