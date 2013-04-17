@@ -102,12 +102,12 @@ trXX(20,N) :- testXX('#20. lesVoisins : desvoisins gauche sur x',
 % ----------------------------------------------------------------
 % Mettre a on le flag "single_var_warnings" 
 % ----------------------------------------------------------------
-:- prolog_flag(single_var_warnings,_,on).             
+%:- prolog_flag(single_var_warnings,_,on).             
 
 % ----------------------------------------------------------------
 % Impression et calcul du résultat
 % ----------------------------------------------------------------
-
+/*
 testTP :- nl,
   write('\n\nTESTS POUR -- lesIds(...)\n==================================================================\n'),
   trXX(1,N1),
@@ -145,3 +145,4 @@ testTP :- nl,
   write(N),write('/16'),nl.
 
 :- testTP.
+*/

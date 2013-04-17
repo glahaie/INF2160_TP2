@@ -198,7 +198,7 @@ elimineBloc(BlocY,[_|BlocsX]) :-
 	elimineBloc(BlocY,BlocsX).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%estStrictementInclus(BlocY,Blocx):
+%estStrictementInclus(+BlocY,+Blocx):
 %BlocX et BlocY sont des listes de blocs
 %Le prédicat vérifie si tous les composants de BlocX sont inclus dans
 %les blocs de BlocX, tel que BlocX contient au moins un autre composant
@@ -211,7 +211,8 @@ elimineBloc(BlocY,[_|BlocsX]) :-
 %
 %Je définie ici le prédicat sousListe pour vérifier si une liste est une 
 %sous-liste d'une autre liste. On pourrait aussi utiliser subset, défini
-%par prolog, mais je préfère le faire moi-même.
+%par prolog, mais je préfère le faire moi-même. Il faut absolument définir
+%BlocY et BlocX, sinon le prédicat ne fournit pas de résultat.
 %
 %Exemple d'utilisation:
 %| ?- bloc(1,B1),bloc(7,B7),estStrictementInclus(B1,B7).
@@ -254,7 +255,7 @@ lesComposantsDuType(Id,Ty,Compos) :- agencement(Id,Ags),
                                      lesComposantsDuType2(Ty,Ags,Compos).
 
 
-%lesComposantsDuType'(Ty,Composants,Compos).
+%lesComposantsDuType2(Ty,Composants,Compos).
 %Ty est le type de composant recherché.
 %Composants est la liste comprenants tous les composants.
 %Compos s'unifie à la liste des composants du type Ty.
