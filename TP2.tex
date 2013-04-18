@@ -8,6 +8,8 @@
 \usepackage{amsfonts}
 \usepackage{tikz}
 \usepackage{moreverb}
+\usepackage{fancyvrb}
+
 
 \title{INF2160 TP2}
 \author{Guillaume Lahaie}
@@ -29,7 +31,7 @@ Date de remise: 26 avril 2013}}\\
 
 Voici le listing du fichier Agencement.pl:
 
-\begin{verbatim}
+\begin{Verbatim}[commandchars=\\\{\}]
 /*********************************************************************
 * Cours		: INF2160
 * Session	: Hiver 20013
@@ -38,14 +40,14 @@ Voici le listing du fichier Agencement.pl:
 * 
 * Auteur	: Bernard Lefebvre
 *
-* Modifié par Guillaume Lahaie
+* Modifie par Guillaume Lahaie
 *             LAHG04077707
-*             Dernière modification: 17 avril 2013
+*             Derniere modification: 17 avril 2013
 *
-*             Les prédicats lesIds,lesComposantsDuType, estSrictementInclus
-*             et les voisins ont été définis pour le TP2. Les prédicats
-*             lesComposantsDuType2 et sousListe ont aussi été définis
-*             pour la réalisation des prédicats mentionnés.
+*             Les predicats lesIds,lesComposantsDuType, estSrictementInclus
+*             et les voisins ont ete definis pour le TP2. Les predicats
+*             lesComposantsDuType2 et sousListe ont aussi ete definis
+*             pour la realisation des predicats mentionnes.
 *********************************************************************/
 
 laDimension(Idc,D) :- composant(_,Idc,D,_,_).
@@ -53,19 +55,19 @@ laPosition(Idc,P) :- composant(_,Idc,_,P,_).
 leType(Idc,Ty) :- composant(_,Idc,_,_,Ty).
 
 % lesComposantsDuBloc(Bloc,Compos)
-% unifie Compos à la liste des composants localisés dans ce bloc
+% unifie Compos a la liste des composants localises dans ce bloc
 lesComposantsDuBloc([axCmp(_,Composant)|AxCmps],[Composant|Composants]) :-
                     lesComposantsDuBloc(AxCmps,Composants).
 lesComposantsDuBloc([],[]).
 
 % faireBloc(Axe,Composants,Bloc)
-% unifie Bloc à une bloc formé à l'aide d'une liste de composants sur l'axe Axe
+% unifie Bloc a une bloc forme a l'aide d'une liste de composants sur l'axe Axe
 faireBloc(Axe,[C|Cs],[axCmp(Axe,C)|AxCmps]) :- faireBloc(Axe,Cs,AxCmps).
 faireBloc(_,[],[]).
 
 % intersectionBlocs(Bloc1,Bloc2,BlocI)
-% unifie BlocI à intersection de Bloc1 et de Bloc2, les composants communs aux 2 blocs
-% se retrouvent dans l'intersection indépendemment de l'axe sur lequel ils se trouvent
+% unifie BlocI a intersection de Bloc1 et de Bloc2, les composants communs aux 2 blocs
+% se retrouvent dans l'intersection independemment de l'axe sur lequel ils se trouvent
 intersectionBlocs([axCmp(Axe,C)|AxCmps],Bloc,[axCmp(Axe,C)|AxCmpsI]) :-
 	lesComposantsDuBloc(Bloc,Compos),
 	member(C,Compos), !, intersectionBlocs(AxCmps,Bloc,AxCmpsI).
@@ -74,8 +76,8 @@ intersectionBlocs([_|AxCmps],Bloc,BlocI) :-
 intersectionBlocs([],_,[]).
 
 % unionBlocs(Bloc1,Bloc2,BlocU)
-% unifie BlocI à l'union de Bloc1 et de Bloc2, les composants des 2 blocs
-% se retrouvent dans l'union une seule fois indépendemment de l'axe sur lequel ils se trouvent
+% unifie BlocI a l'union de Bloc1 et de Bloc2, les composants des 2 blocs
+% se retrouvent dans l'union une seule fois independemment de l'axe sur lequel ils se trouvent
 unionBlocs([axCmp(_,C)|AxCmps],Bloc,BlocU) :-
 	lesComposantsDuBloc(Bloc,Compos),
 	member(C,Compos), !, unionBlocs(AxCmps,Bloc,BlocU).
@@ -99,7 +101,7 @@ laLargeur(Idc,L) :- laDimension(Idc,(_,L,_)).
 laProfondeur(Idc,P) :- laDimension(Idc,(_,_,P)).
 
 % leComposant(IdAgencement,IdComposant)
-% unifie IdComposant à un identifaint de composant de l'agencement d'identifiant
+% unifie IdComposant a un identifaint de composant de l'agencement d'identifiant
 % IdAgencement
 leComposant(Ida,Idc) :-
 	agencement(Ida,IdCs),
@@ -118,7 +120,9 @@ estVoisin(gauche,Axe,C1,C2) :-
 	laLargeur(C2,L2),
 	(Axe = x -> Xl2 is X2 + L2, Xl2 == X1, Y1 == Y2, Z1 == Z2;
 	    Yl2 is Y2 - L2, Yl2 == Y1, X1 == X2, Z1 == Z2).
-
+\end{Verbatim}
+\newpage
+\begin{Verbatim}[fontseries=b]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % lesVoisins(Dir,Axe,Ag,Compo,Voisins)
@@ -126,16 +130,16 @@ estVoisin(gauche,Axe,C1,C2) :-
 % Axe est un axe
 % Ag est un agencement
 % Compo est un composant 
-% Voisins s'unifie à la liste des voisins de Compo sur l'axe Axe et dans la 
-% direction Dir. Ici, la liste des voisins comprend tous les blocs liés dans
-% la direction donnée. Par exemple, si b1 est un voisin de b2 et b2 est un 
+% Voisins s'unifie a la liste des voisins de Compo sur l'axe Axe et dans la 
+% direction Dir. Ici, la liste des voisins comprend tous les blocs lies dans
+% la direction donnee. Par exemple, si b1 est un voisin de b2 et b2 est un 
 % voisin de Compo, alors b1 et b2 seront dans la liste Voisins.
 %
-%On tente donc de trouver un voisin de Compo à partir de la liste des composants
-%de l'agencement donné. Si on trouve un voisin, on cherche alors les voisins de
-%ce composant dans la liste originale, dans la même direction donnée (sinon, on
-%pourrait obtenir une récurision sans fin). On ajoute ce résultat à la liste Voisins,
-%et on continue ensuite à traiter le reste de la liste 
+%On tente donc de trouver un voisin de Compo a partir de la liste des composants
+%de l'agencement donne. Si on trouve un voisin, on cherche alors les voisins de
+%ce composant dans la liste originale, dans la meme direction donnee (sinon, on
+%pourrait obtenir une recursion sans fin). On ajoute ce resultat a la liste Voisins,
+%et on continue ensuite a traiter le reste de la liste 
 %
 %Exemple d'utilisation:
 %| ?- lesVoisins(droite,y,ag,b3,Bs).
@@ -151,11 +155,12 @@ lesVoisins(_,_,_,[],_,[]).
 lesVoisins(Dir,Axe,Ag,[X|Xs],Compo,[X|Ys]) :- estVoisin(Dir,Axe,Compo,X),
                                 lesVoisins(Dir,Axe,Ag,X,Voisins),append(Voisins,Zs,Ys),
                                 lesVoisins(Dir,Axe,Ag,Xs,Compo,Zs).
-lesVoisins(Dir,Axe,Ag,[X|Xs],Compo,Ys) :- \+ estVoisin(Dir,Axe,Compo,X),
+lesVoisins(Dir,Axe,Ag,[X|Xs],Compo,Ys) :- \\+ estVoisin(Dir,Axe,Compo,X),
                                                 lesVoisins(Dir,Axe,Ag,Xs,Compo,Ys).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+\end{Verbatim}
+\begin{Verbatim}
 % leBloc(Ax,Ag,Compo,Bloc)
 % Axe est un axe
 % Ag est un agencement
@@ -169,7 +174,7 @@ leBloc(Axe,Ag,Compo,Bloc) :-
 % sontDansMemeBloc(Ag,C1,C2)
 % Axe est un axe
 % C1 et C2 sont des composants
-% le prédicat est vrai si et seulement si C1 et C2 font partie d'un même bloc
+% le predicat est vrai si et seulement si C1 et C2 font partie d'un meme bloc
 sontDansMemeBloc(Ag,C1,C2) :-
 	leBloc(x,Ag,C1,Bx),
 	leBloc(y,Ag,C1,By),
@@ -189,7 +194,7 @@ estDansBlocs([_|Blocs],C) :-
 % Axe est x ou y
 % Ag est un agencement
 % Compos est une liste de composants
-% unifie Blocs à la liste des blocs sur l'axe formés avec chacun des composants de compos
+% unifie Blocs a la liste des blocs sur l'axe formes avec chacun des composants de compos
 lesBlocs(_,_,[],[]).
 lesBlocs(Axe,Ag,[Compo|Compos],Blocs) :-
 	lesBlocs(Axe,Ag,Compos,Blocps),
@@ -200,16 +205,16 @@ lesBlocs(Axe,Ag,[Compo|Compos],Blocs) :-
 % lesBlocs(Axe,Ag,Blocs)
 % Axe est x ou y
 % Ag est un agencement
-% unifie Blocs à la liste des blocs sur l'axe
+% unifie Blocs a la liste des blocs sur l'axe
 lesBlocs(Axe,Ag,Blocs) :-
 	agencement(Ag,Compos),
 	lesBlocs(Axe,Ag,Compos,Blocs).
 
 % lesBlocs(Ag,Blocs)
 % Ag est un agencement
-% unifie Blocs à la liste des blocs de l'agencement
-% Cetet liste est obtenue en prenant les listes correspondants à chaque axe
-% et en éliminant les blocs d'un axe qui sont inclus strictement dans les blocs de l'autre axe
+% unifie Blocs a la liste des blocs de l'agencement
+% Cetet liste est obtenue en prenant les listes correspondants a chaque axe
+% et en eliminant les blocs d'un axe qui sont inclus strictement dans les blocs de l'autre axe
 lesBlocs(Ag,Blocs) :-
 	lesBlocs(x,Ag,BlocsX),
 	lesBlocs(y,Ag,BlocsY),
@@ -228,22 +233,23 @@ elimineBloc(BlocY,[BlocX|_]) :-
 	estStrictementInclus(BlocY,BlocX),!.
 elimineBloc(BlocY,[_|BlocsX]) :-
 	elimineBloc(BlocY,BlocsX).
-
+\end{Verbatim}
+\begin{Verbatim}[fontseries=b]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %estStrictementInclus(BlocY,Blocx):
 %BlocX et BlocY sont des listes de blocs
-%Le prédicat vérifie si tous les composants de BlocX sont inclus dans
+%Le predicat verifie si tous les composants de BlocX sont inclus dans
 %les blocs de BlocX, tel que BlocX contient au moins un autre composant
-%qui n'est pas contenu dans BlocY (selon la définition ensembliste d'un
+%qui n'est pas contenu dans BlocY (selon la definition ensembliste d'un
 %ensemble strictement inclus dans un autre ensemble).
 %On obtient donc la liste des composants des deux blocs, et ensuite on compare
-%on vérifie si la liste des composants de BlocX est une sous-liste de la liste
+%on verifie si la liste des composants de BlocX est une sous-liste de la liste
 %de BlocY, et aussi si la liste des composants de BlocY n'est pas une sous-liste
 %de BlocX.
 %
-%Je définie ici le prédicat sousListe pour vérifier si une liste est une 
-%sous-liste d'une autre liste. On pourrait aussi utiliser subset, défini
-%par prolog, mais je préfère le faire moi-même.
+%Je definie ici le predicat sousListe pour verifier si une liste est une 
+%sous-liste d'une autre liste. On pourrait aussi utiliser subset, defini
+%par prolog, mais je prefere le faire moi-meme.
 %
 %Exemple d'utilisation:
 %| ?- bloc(1,B1),bloc(7,B7),estStrictementInclus(B1,B7).
@@ -255,8 +261,8 @@ estStrictementInclus(By,Bx) :- lesComposantsDuBloc(By, Cys),
                                sousListe(Cys,Cxs),\+sousListe(Cxs,Cys).
 
 %sousListe(L1,L2):
-%L1 et L2 sont deux listes, de n'importe quel type d'éléments
-%sousListe vérifie si la liste L1 est une sous-liste de L2.
+%L1 et L2 sont deux listes, de n'importe quel type d'elements
+%sousListe verifie si la liste L1 est une sous-liste de L2.
 %Exemples d'utilisation:
 %| ?- sousListe([1,2,3],[1,2,3,4,5,6]).
 %yes
@@ -266,18 +272,19 @@ sousListe([],_).
 sousListe([X|Xs],Liste) :- member(X,Liste),sousListe(Xs,Liste).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %lesComposantsDuType(IdAgencement, Ty, Compos):
 %idAgencement: un agencement, fourni selon son identificateur
-%Ty: le type de composant recherché
-%Compos: s'unifie à la liste des composants de type Ty contenus dans l'agencement
-%idAgencement. La liste Compos doit contenir tous les éléments qui s'unifient, et
-%non une sous-liste. Je définie un deuxième prédicat pour vérifier la liste des
+%Ty: le type de composant recherche
+%Compos: s'unifie a la liste des composants de type Ty contenus dans l'agencement
+%idAgencement. La liste Compos doit contenir tous les elements qui s'unifient, et
+%non une sous-liste. Je definie un deuxieme predicat pour verifier la liste des
 %composants, alors que lesComposantsDuType obtient la liste des composants
-%d'un agencement qui est utilisé par le second prédicat.
-%
+%d'un agencement qui est utilise par le second predicat.
+%\\
 %On obtient tout d'abord la liste des composants de l'agencement, et ensuite on
-%vérifie chaque agencement. Si l'agencement est du type recherché, on l'insère
-%dans Compos, sinon, on passe au prochain élément de la liste.
+%verifie chaque agencement. Si l'agencement est du type recherche, on l'insere
+%dans Compos, sinon, on passe au prochain element de la liste.
 %Exemple d'utilisation:
 %| ?- lesComposantsDuType(ag,bas,Bs).
 %Bs = [b3,b4] ? 
@@ -285,12 +292,11 @@ sousListe([X|Xs],Liste) :- member(X,Liste),sousListe(Xs,Liste).
 lesComposantsDuType(Id,Ty,Compos) :- agencement(Id,Ags),
                                      lesComposantsDuType2(Ty,Ags,Compos).
 
-
 %lesComposantsDuType2(Ty,Composants,Compos).
-%Ty est le type de composant recherché.
+%Ty est le type de composant recherche.
 %Composants est la liste comprenants tous les composants.
-%Compos s'unifie à la liste des composants du type Ty.
-%Compos doit contenir tous les éléments du type recherche, et non seulement
+%Compos s'unifie a la liste des composants du type Ty.
+%Compos doit contenir tous les elements du type recherche, et non seulement
 %une sous-liste.
 %exemple d'utilisation:
 %| ?- lesComposantsDuType2(haut,[b1,b2,b3,b4,b5,b6,h1,h2],Compos).
@@ -300,19 +306,21 @@ lesComposantsDuType2(Ty,[X|Xs],[X|Q]) :- composant(_,X,_,_,Ty),!,
                                          lesComposantsDuType2(Ty,Xs,Q).
 lesComposantsDuType2(Ty,[_|Xs], Q) :- !,lesComposantsDuType2(Ty,Xs,Q).
 lesComposantsDuType2(_,[],[]).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{Verbatim}
+\begin{Verbatim}
 
 % possedeTypes(Ag,Types)
-% Est vrai si et seulement si l'agencement Ag possède tous les types de composants
+% Est vrai si et seulement si l'agencement Ag possede tous les types de composants
 % de la liste Types
 possedeTypes(Ag,[Ty|Types]) :-
 	lesComposantsDuType(Ty,Ag,[_|_]),
 	possedeTypes(Ag,Types).
 possedeTypes(_,[]).
 
-
-
+\end{Verbatim}
+\begin{Verbatim}[fontseries=b]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 
 % lesIds(Blocs,Css)
@@ -320,8 +328,8 @@ possedeTypes(_,[]).
 % Css: Liste de liste d'identificateurs de composants.
 % lesIds Unifient Css avec la liste de listes ce composants des blocs de la 
 % liste Blocs.Il est possible aussi d'unifier la liste Blocs avec les
-% blocs associés à la liste de listes de composants, toutefois l'information
-% dans les blocs sera incomplète, on ne peut obtenir la direction de l'axe.
+% blocs associes a la liste de listes de composants, toutefois l'information
+% dans les blocs sera incomplete, on ne peut obtenir la direction de l'axe.
 % Exemple d'utilisation:
 %| ?- bloc(1,Bloc1),bloc(2,Bloc2),lesIds([Bloc1,Bloc2],Ids).
 %Ids = [[b1,b2,b4],[b5,b6]],
@@ -333,8 +341,7 @@ lesIds([X|Xs], [C|Css]) :- lesComposantsDuBloc(X, C),lesIds(Xs,Css).
 lesIds([],[]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\end{verbatim}
-
+\end{Verbatim}
 
 \begin{center}
 \line(1,0){250}
@@ -389,18 +396,18 @@ NOTE FINALE: 16.0/16
 yes
 \end{verbatim}
 
-Voici la définition des autres tests ajoutés (testés sur swipl).
+Voici la definition des autres tests ajoutés (testés sur swipl).
 
-1. lesIds: Obtenir une liste de blocs à partir d'une liste de liste de composants.
-\begin{verbatim}
+1. lesIds: Obtenir une liste de blocs a partir d'une liste de liste de composants.
+\begin{Verbatim}[fontsize=\small]
 ?- lesIds(Bs,[[b1,b2,b3],[h1,h2]]).
 Bs = [[axCmp(_G339, b1), axCmp(_G345, b2), axCmp(_G351, b3)], [axCmp(_G360, h1), axCmp(_G366, h2)]] .
 |    lesIds(Bs,[]).
 Bs = [].
-\end{verbatim}
+\end{Verbatim}
 
 Ici, on peut voir que la direction des blocs est inconnue, car la fonction ne peut déterminer cette
-information. Pour la liste vide, on obtient une liste de blocs vide, ce qui est le résultat attendu.
+information. Pour la liste vide, on obtient une liste de blocs vide, ce qui est le resultat attendu.
 
 \begin{center}
 \line(1,0){250}
@@ -416,36 +423,36 @@ false.
 Ty = haut.
 \end{verbatim}
 
-Pour l'exemple 1 et 3, on obtient le bon résultat, le type de Ty est celui commun à tous les composants
-de la liste fournie. Toutefois, le résultat de l'exemple 3 ne vérifie pas que la liste des composants contient
+Pour l'exemple 1 et 3, on obtient le bon resultat, le type de Ty est celui commun a tous les composants
+de la liste fournie. Toutefois, le resultat de l'exemple 3 ne verifie pas que la liste des composants contient
 tous les composants d'un type de l'agencement.
 
-Pour l'exemple 2, on obtient un bon résultat, car l'interpréteur détecte que les composants de la liste fournie
-ne sont pas tous du même type.
+Pour l'exemple 2, on obtient un bon resultat, car l'interpréteur détecte que les composants de la liste fournie
+ne sont pas tous du meme type.
 
 \begin{center}
 \line(1,0){250}
 \end{center}
 
-3. estStrictementInclus: Vérifier si un bloc est strictement inclus dans lui-même.
+3. estStrictementInclus: Vérifier si un bloc est strictement inclus dans lui-meme.
 \begin{verbatim}
 |    bloc(7,B7),estStrictementInclus(B7,B7).
 false.
 \end{verbatim}
 
-Tel qu'attendu, d'après la définition d'un ensemble strictement inclus dans un autre ensemble,
-un bloc n'est pas strictement inclus dans lui-même.
+Tel qu'attendu, d'après la definition d'un ensemble strictement inclus dans un autre ensemble,
+un bloc n'est pas strictement inclus dans lui-meme.
 
-J'ai aussi tenté de vérifier si, à partir de la définition d'un bloc, prolog peut créer soit un
-bloc qui est strictement inclus dans le bloc donné (donc estStrictementInclus(Bs,bloc)), ou 
+J'ai aussi tenté de verifier si, a partir de la definition d'un bloc, prolog peut créer soit un
+bloc qui est strictement inclus dans le bloc donne (donc estStrictementInclus(Bs,bloc)), ou 
 encore le contraire (estStrictementInclus(bloc, Bs)). Dans ces situations, prolog ne peut
-déterminer un résultat.
+déterminer un resultat.
 
 \begin{center}
 \line(1,0){250}
 \end{center}
 
-4. lesVoisins: Vérifier si on peut unifier Compo à partir d'une définition de Voisins
+4. lesVoisins: Vérifier si on peut unifier Compo a partir d'une definition de Voisins
 \begin{verbatim}
 ?- lesVoisins(gauche,x,ag,Compo,[b1]).
 Compo = b2.
@@ -455,7 +462,7 @@ false.
 false.
 \end{verbatim}
 
-Ici, on obtient le bon résultat pour le premier test, mais pas pour le troisième. Le prédicat peut
-donc être utilisé pour unifier Voisins à partir de Compo, mais pas pour unifier Compo à partir de Voisins.
+Ici, on obtient le bon resultat pour le premier test, mais pas pour le troisième. Le predicat peut
+donc être utilise pour unifier Voisins a partir de Compo, mais pas pour unifier Compo a partir de Voisins.
 
 \end{document}
