@@ -89,7 +89,7 @@ estVoisin(gauche,Axe,C1,C2) :-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% lesVoisins(Dir,Axe,Ag,Compo,Voisins)
+% lesVoisins(+Dir,+Axe,+Ag,+Compo,-Voisins)
 % Dir est une direction
 % Axe est un axe
 % Ag est un agencement
@@ -235,7 +235,7 @@ sousListe([],_).
 sousListe([X|Xs],Liste) :- member(X,Liste),sousListe(Xs,Liste).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%lesComposantsDuType(IdAgencement, Ty, Compos):
+%lesComposantsDuType(+IdAgencement, ?Ty, ?Compos):
 %idAgencement: un agencement, fourni selon son identificateur
 %Ty: le type de composant recherché
 %Compos: s'unifie à la liste des composants de type Ty contenus dans l'agencement
@@ -255,7 +255,7 @@ lesComposantsDuType(Id,Ty,Compos) :- agencement(Id,Ags),
                                      lesComposantsDuType2(Ty,Ags,Compos).
 
 
-%lesComposantsDuType2(Ty,Composants,Compos).
+%lesComposantsDuType2(?Ty,+Composants,?Compos).
 %Ty est le type de composant recherché.
 %Composants est la liste comprenants tous les composants.
 %Compos s'unifie à la liste des composants du type Ty.
@@ -284,7 +284,7 @@ possedeTypes(_,[]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 
-% lesIds(Blocs,Css)
+% lesIds(?Blocs,?Css)
 % Blocs: Liste de blocs
 % Css: Liste de liste d'identificateurs de composants.
 % lesIds Unifient Css avec la liste de listes ce composants des blocs de la 

@@ -323,7 +323,7 @@ possedeTypes(_,[]).
 \begin{Verbatim}[fontseries=b]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 
-% lesIds(Blocs,Css)
+% lesIds(?Blocs,?Css)
 % Blocs: Liste de blocs
 % Css: Liste de liste d'identificateurs de composants.
 % lesIds Unifient Css avec la liste de listes ce composants des blocs de la 
@@ -401,8 +401,9 @@ Voici la definition des autres tests ajoutés (testés sur swipl).
 1. lesIds: Obtenir une liste de blocs a partir d'une liste de liste de composants.
 \begin{Verbatim}[fontsize=\small]
 ?- lesIds(Bs,[[b1,b2,b3],[h1,h2]]).
-Bs = [[axCmp(_G339, b1), axCmp(_G345, b2), axCmp(_G351, b3)], [axCmp(_G360, h1), axCmp(_G366, h2)]] .
-|    lesIds(Bs,[]).
+Bs = [[axCmp(_G339, b1), axCmp(_G345, b2), axCmp(_G351, b3)], [axCmp(_G360, h1), axCmp(_G366, h2)]] ;
+false.
+?- lesIds(Bs,[]).
 Bs = [].
 \end{Verbatim}
 
